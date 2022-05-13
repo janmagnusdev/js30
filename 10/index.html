@@ -96,6 +96,36 @@
   </div>
 
 <script>
+  let isShiftPressed = false;
+  let lastChecked = null;
+
+  let checkboxes = document.querySelectorAll(".item > input");
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", e => {
+      let targetChecked = e.currentTarget.checked;
+      e.preventDefault();
+      if (isShiftPressed) {
+        let thisIndex = Array.from(checkboxes).indexOf(checkbox);
+        let lastCheckedIndex = Array.from(checkboxes).indexOf(lastChecked);
+        if (thisIndex > lastCheckedIndex) {
+          let tmp = thisIndex;
+          thisIndex = lastCheckedIndex;
+          lastCheckedIndex = tmp;
+        }
+        Array.from(checkboxes).slice(thisIndex, lastCheckedIndex).forEach(checkbox => checkbox.checked = targetChecked);
+      }
+      lastChecked = checkbox;
+    })
+  })
+
+  window.addEventListener("keydown", e => {
+    if (e.key !== "Shift") return;
+    isShiftPressed = true;
+  });
+  window.addEventListener("keyup", e => {
+    if (e.key !== "Shift") return;
+    isShiftPressed = false;
+  })
 </script>
 </body>
 </html>
