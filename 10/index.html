@@ -99,24 +99,40 @@
   let isShiftPressed = false;
   let lastChecked = null;
 
-  let checkboxes = document.querySelectorAll(".item > input");
+  const checkboxes = document.querySelectorAll(".item > input");
   checkboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", e => {
-      let targetChecked = e.currentTarget.checked;
-      e.preventDefault();
-      if (isShiftPressed) {
-        let thisIndex = Array.from(checkboxes).indexOf(checkbox);
-        let lastCheckedIndex = Array.from(checkboxes).indexOf(lastChecked);
-        if (thisIndex > lastCheckedIndex) {
-          let tmp = thisIndex;
-          thisIndex = lastCheckedIndex;
-          lastCheckedIndex = tmp;
-        }
-        Array.from(checkboxes).slice(thisIndex, lastCheckedIndex).forEach(checkbox => checkbox.checked = targetChecked);
+    checkbox.addEventListener("click", handleCheck);
+  });
+  let checkboxesArray = Array.from(checkboxes);
+
+
+  function handleCheck(e) {
+    let targetCheckbox = e.currentTarget;
+    let targetState = targetCheckbox.checked;
+    let targetCheckboxIndexInCheckboxes = checkboxesArray.indexOf(targetCheckbox);
+    let lastCheckedIndexInCheckboxes = checkboxesArray.indexOf(lastChecked);
+
+    if (isShiftPressed) {
+      // toggle boxes in between lastChecked and targetCheckbox to targetState inclusively
+      let begin;
+      let end;
+      if (targetCheckboxIndexInCheckboxes > lastCheckedIndexInCheckboxes) {
+        begin = lastCheckedIndexInCheckboxes;
+        end = targetCheckboxIndexInCheckboxes;
+      } else {
+        begin = targetCheckboxIndexInCheckboxes;
+        end = lastCheckedIndexInCheckboxes;
       }
-      lastChecked = checkbox;
-    })
-  })
+
+      // + 1, because slice is not inclusive to end, but we want to include end
+      checkboxesArray.slice(begin, end + 1).forEach(checkbox => checkbox.checked = targetState);
+    } else {
+      // only toggle target box
+      targetCheckbox.checked = targetState;
+    }
+
+    lastChecked = targetCheckbox;
+  }
 
   window.addEventListener("keydown", e => {
     if (e.key !== "Shift") return;
