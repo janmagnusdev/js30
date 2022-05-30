@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Key Detection</title>
+</head>
+<body>
+<p id="my-secret">Psst: You'll find an Easter Egg when you type my username!</p>
+<img src="easter-egg.jpg" alt="the easter egg" hidden/>
+
+<script>
+  const secretCode = "janmagnusdev";
+  const secretMessage = "Yay you found it!";
+  const lostMessage = "Oh no, you lost it!";
+  let pressed = [];
+  let found = false;
+  const textTag = document.querySelector("#my-secret");
+  const imageTag = document.querySelector("img");
+
+  const l = (log) => {
+    console.log(log);
+  }
+
+  window.addEventListener("keyup", (e) => {
+    pressed.push(e.key);
+    l(pressed);
+    if (pressed.join("").includes(secretCode)) {
+      textTag.innerText = secretMessage;
+      found = true;
+      imageTag.hidden = false;
+    } else if (found) {
+      textTag.innerText = lostMessage;
+      imageTag.hidden = true;
+    }
+    // only the latest n elements are interesting to us, where n is the number of chars in secretCode
+    if (pressed.length >= secretCode.length) {
+      let toRemove = pressed.length - secretCode.length + 1;
+      pressed = pressed.slice(toRemove);
+    }
+  });
+</script>
+</body>
+</html>
