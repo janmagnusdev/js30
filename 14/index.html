@@ -85,6 +85,10 @@
 
     // Things to note - this is only 1 level deep - both for Arrays and Objects. lodash has a cloneDeep method, but you should think twice before using it.
 
+    // poor mans deep clone
+    const dev2 = JSON.parse(JSON.stringify(person));
+    dev2.hello = "moin";
+
   </script>
 
 </body>
