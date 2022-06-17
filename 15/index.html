@@ -23,12 +23,75 @@
       <input type="text" name="item" placeholder="Item Name" required>
       <input type="submit" value="+ Add Item">
     </form>
+    <button id="clear-button">Clear all</button>
+    <button id="check-button">Check all</button>
+    <button id="uncheck-button">Uncheck all</button>
   </div>
 
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  const items = JSON.parse(localStorage.getItem("items")) || [];
+
+  function toggleDone(e) {
+    if (!e.target.matches("input")) return;
+    const el = e.target;
+    const index = el.dataset.index;
+    items[index].done = !items[index].done;
+    persistToLocalStorage();
+  }
+
+  function persistToLocalStorage() {
+    localStorage.setItem("items", JSON.stringify(items));
+  }
+
+  itemsList.addEventListener("click", toggleDone);
+
+  addItems.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const formElement = e.currentTarget;
+    const text = formElement.querySelector("[name=item]").value;
+    const item = {
+      text,
+      done: false
+    };
+
+    items.push(item);
+    populateList(items, itemsList);
+    persistToLocalStorage();
+    formElement.reset();
+  })
+
+  function populateList(items = [], itemsListElement) {
+    itemsListElement.innerHTML = items.map((item, i) => {
+      return `
+        <li>
+            <input type="checkbox" data-index="${i}" id="item${i}" ${item.done ? "checked" : ""} />
+            <label for="item${i}">${item.text}</label>
+        </li>
+      `;
+    }).join("");
+  }
+
+  document.querySelector("#clear-button").addEventListener("click", (e) => {
+    items.splice(0, items.length);
+    populateList(items, itemsList);
+    persistToLocalStorage();
+  });
+
+  document.querySelector("#check-button").addEventListener("click", (e) => {
+    items.forEach(item => item.done = true);
+    populateList(items, itemsList);
+    persistToLocalStorage();
+  });
+
+  document.querySelector("#uncheck-button").addEventListener("click", (e) => {
+    items.forEach(item => item.done = false);
+    populateList(items, itemsList);
+    persistToLocalStorage();
+  });
+
+  populateList(items, itemsList);
 
 </script>
 
