@@ -48,6 +48,37 @@
 <script>
 const bands = ['The Plot in You', 'The Devil Wears Prada', 'Pierce the Veil', 'Norma Jean', 'The Bled', 'Say Anything', 'The Midway State', 'We Came as Romans', 'Counterparts', 'Oh, Sleeper', 'A Skylit Drive', 'Anywhere But Here', 'An Old Dog'];
 
+const exclude = ['The', 'A', 'An'];
+
+console.table(bands);
+const metaBands = bands.map(band => {
+  let filtered = false;
+  let filteredSequence = "";
+  for (let excluded of exclude) {
+    let toFilter = excluded + " ";
+    if (band.includes(toFilter)) {
+      band = band.replace(toFilter, "");
+      filtered = true;
+      filteredSequence = toFilter;
+    }
+  }
+  return {
+    band,
+    filtered,
+    filteredSequence
+  }
+})
+
+console.table(metaBands);
+metaBands.sort((firstEl, secondEl) => {
+  return firstEl.band.localeCompare(secondEl.band);
+})
+metaBands.forEach(metaBand => {
+  if (metaBand.filtered) {
+    metaBand.band = metaBand.filteredSequence + metaBand.band;
+  }
+})
+console.table(metaBands);
 
 </script>
 
